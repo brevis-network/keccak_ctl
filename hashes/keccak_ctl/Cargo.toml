@@ -25,5 +25,7 @@ hashbrown.workspace = true
 ethereum-types.workspace = true
 num.workspace = true
 
+bincode = "1.3.3"
+
 [lib]
 doctest = false

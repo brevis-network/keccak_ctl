@@ -5,6 +5,8 @@ use plonky2::plonk::circuit_data::CircuitData;
 use plonky2::plonk::config::{AlgebraicHasher, GenericConfig};
 use plonky2::plonk::proof::ProofWithPublicInputs;
 
+use bincode;
+
 use plonky2_field::extension::Extendable;
 use starky_ctl::stark::Stark;
 
@@ -35,6 +37,24 @@ where
     let (stark, proof) = keccak256proof_stark::<F, C, D>(msg, hash)?;
 
     keccak256verify_stark(stark.clone(), proof.clone())?;
+
+    let pfBytes = bincode::serialize(&proof.stark_proofs);
+    println!("Proof stark size: {} bytes", pfBytes.unwrap().len());
+
+    let vec: Vec<u8> = vec![104, 101, 108, 108, 111]; // These are bytes for the string "hello"
+    let result = String::from_utf8(vec);
+
+    match result {
+        Ok(s) => println!("{}", s),
+        Err(e) => println!("Failed to convert to String: {}", e),
+    }
+
+    let pfBytes2 = bincode::serialize(&proof.stark_proofs);
+    let result =  String::from_utf8(pfBytes2.unwrap());
+    match result {
+        Ok(s) => println!("{}", s),
+        Err(e) => println!("Failed to convert to String: {}", e),
+    }
 
     let (data, proof) = aggregation_sponge_permutation::<F, C, D>(&stark, proof)?;
     let timing = TimingTree::new("To verify aggregation", Level::Debug);
